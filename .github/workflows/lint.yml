@@ -27,6 +27,11 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install deps
+        run: pnpm install
 
       - name: Lint js
         run: pnpm lint:js
@@ -41,6 +46,11 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install deps
+        run: pnpm install
 
       - name: Lint solitidy
         run: pnpm lint:sol
