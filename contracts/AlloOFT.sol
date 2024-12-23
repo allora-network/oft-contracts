@@ -11,4 +11,8 @@ contract AlloOFT is OFT {
         address _lzEndpoint,
         address _delegate
     ) OFT(_name, _symbol, _lzEndpoint, _delegate) Ownable(_delegate) {}
+
+    function sharedDecimals() public pure override returns (uint8) {
+        return 18;
+    }
 }
