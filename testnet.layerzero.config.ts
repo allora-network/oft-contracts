@@ -7,7 +7,7 @@ const sepoliaContract: OmniPointHardhat = {
     contractName: 'AlloOFT',
 }
 
-const atlantic2Contract: OmniPointHardhat = {
+const arctic1Contract: OmniPointHardhat = {
     eid: EndpointId.SEI_V2_TESTNET,
     contractName: 'AlloOFTAdapter',
 }
@@ -18,16 +18,16 @@ const config: OAppOmniGraphHardhat = {
             contract: sepoliaContract,
         },
         {
-            contract: atlantic2Contract,
+            contract: arctic1Contract,
         },
     ],
     connections: [
         {
             from: sepoliaContract,
-            to: atlantic2Contract,
+            to: arctic1Contract,
         },
         {
-            from: atlantic2Contract,
+            from: arctic1Contract,
             to: sepoliaContract,
         },
     ],

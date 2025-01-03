@@ -49,7 +49,6 @@ const config: HardhatUserConfig = {
                         enabled: true,
                         runs: 200,
                     },
-                    evmVersion: 'paris',
                 },
             },
         ],
@@ -60,12 +59,12 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL_SEPOLIA || 'https://rpc.sepolia.org/',
             accounts,
         },
-        'sei-testnet': {
+        'sei-devnet': {
             eid: EndpointId.SEI_V2_TESTNET,
-            url: process.env.RPC_URL_ATLANTIC2 || 'https://evm-rpc-testnet.sei-apis.com',
+            url: process.env.RPC_URL_ARCTIC1 || 'https://evm-rpc-arctic-1.sei-apis.com',
             accounts,
             oftAdapter: {
-                tokenAddress: '0x977567A88659Ea568bc6cA2880957cC7621D116A', // Set the token address for the OFT adapter
+                tokenAddress: '0xc7e7A1B625225fEd006B3DdF6f402e45664D266a', // Set the token address for the OFT adapter
             },
         },
         hardhat: {
