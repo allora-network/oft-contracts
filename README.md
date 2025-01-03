@@ -16,6 +16,13 @@
 
 <p align="center">Template project for getting started with LayerZero's <code>OFTAdapter</code> contract development.</p>
 
+### Deployed contracts
+
+**Testnets:**
+
+- Sei devnet: `0x7A8e661524daf2c41AC1df0bAa91f42098Ad6eA9`
+- Sepolia testnet: `0x7A8e661524daf2c41AC1df0bAa91f42098Ad6eA9`
+
 ### OFTAdapter additional setup:
 
 - In your `hardhat.config.ts` file, add the following configuration to the network you want to deploy the OFTAdapter to:
