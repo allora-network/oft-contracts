@@ -1,0 +1,56 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - release-*
+  pull_request:
+
+permissions:
+  contents: read
+  checks: write
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-js:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install deps
+        run: pnpm install
+
+      - name: Lint js
+        run: pnpm lint:js
+
+  lint-sol:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install deps
+        run: pnpm install
+
+      - name: Lint solitidy
+        run: pnpm lint:sol
