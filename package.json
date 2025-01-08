@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
+    "@layerzerolabs/devtools-evm-hardhat": "^2.0.4",
     "@layerzerolabs/eslint-config-next": "~2.3.44",
     "@layerzerolabs/lz-definitions": "^3.0.36",
     "@layerzerolabs/lz-evm-messagelib-v2": "^3.0.36",
@@ -34,7 +35,6 @@
     "@layerzerolabs/test-devtools-evm-foundry": "~5.1.0",
     "@layerzerolabs/toolbox-foundry": "~0.1.10",
     "@layerzerolabs/toolbox-hardhat": "~0.6.3",
-    "@layerzerolabs/devtools-evm-hardhat": "^2.0.4",
     "@nomicfoundation/hardhat-ethers": "^3.0.8",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@openzeppelin/contracts": "^5.1.0",

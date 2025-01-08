@@ -89,6 +89,12 @@ More information about available CLI arguments can be found using the `--help` f
 npx hardhat lz:deploy --help
 ```
 
+Finally, to wire the contracts and create the paths:
+
+```bash
+npx hardhat lz:oapp:wire --oapp-config testnet.layerzero.config.ts
+```
+
 ## Sending tokens
 
 The `lz:oft:send` hardhat task is available to send tokens through the LayerZero bridge, find below some examples:
