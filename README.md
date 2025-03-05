@@ -1,44 +1,40 @@
-<p align="center">
-  <a href="https://layerzero.network">
-    <img alt="LayerZero" style="width: 400px" src="https://docs.layerzero.network/img/LayerZero_Logo_White.svg"/>
-  </a>
-</p>
+# oft-contracts
 
-<p align="center">
-  <a href="https://layerzero.network" style="color: #a77dff">Homepage</a> | <a href="https://docs.layerzero.network/" style="color: #a77dff">Docs</a> | <a href="https://layerzero.network/developers" style="color: #a77dff">Developers</a>
-</p>
+This repository contains sources of OFT contracts related to the **\$ALLO** token, and reference its deployments on different networks.
 
-<h1 align="center">OFTAdapter Example</h1>
+## Deployments
 
-<p align="center">
-  <a href="https://docs.layerzero.network/v2/developers/evm/oft/adapter" style="color: #a77dff">Quickstart</a> | <a href="https://docs.layerzero.network/contracts/oapp-configuration" style="color: #a77dff">Configuration</a> | <a href="https://docs.layerzero.network/contracts/options" style="color: #a77dff">Message Execution Options</a> | <a href="https://docs.layerzero.network/contracts/endpoint-addresses" style="color: #a77dff">Endpoint Addresses</a>
-</p>
+### Details
 
-<p align="center">Template project for getting started with LayerZero's <code>OFTAdapter</code> contract development.</p>
+The native **\$ALLO** comes from the Allora Cosmos SDK based blockchain, in order to make it available to LayerZero ecosystem it is bridged with the Sei network over IBC (i.e. a Cosmos SDK based chain with EVM capabilities). From Sei a token pointer contract makes the native **\$ALLO** token available through an ERC-20 on EVM side, the `AlloOFTAdapter` contract is then used using this pointer as inner token to make it available to the LZ ecosystem. The other networks have the `AlloOFT` contract deployed.
 
-### OFTAdapter additional setup:
+When sending tokens from Sei side, as the OFT adapter manages an ERC-20 2 transactions are needed, a first one to approche the adapter to spend tokens from the ERC-20 and then the lz send.
 
-- In your `hardhat.config.ts` file, add the following configuration to the network you want to deploy the OFTAdapter to:
-  ```typescript
-  // Replace `0x0` with the address of the ERC20 token you want to adapt to the OFT functionality.
-  oftAdapter: {
-      tokenAddress: '0x0',
-  }
-  ```
+### Testnets
 
-## 1) Developing Contracts
+### Sei devnet
 
-#### Installing dependencies
+Token pointer contract: [`0xc7e7A1B625225fEd006B3DdF6f402e45664D266a`](https://seitrace.com/address/0xc7e7A1B625225fEd006B3DdF6f402e45664D266a?chain=arctic-1)
 
-We recommend using `pnpm` as a package manager (but you can of course use a package manager of your choice):
+OFT adapter contract: [`0x7A8e661524daf2c41AC1df0bAa91f42098Ad6eA9`](https://seitrace.com/address/0x7A8e661524daf2c41AC1df0bAa91f42098Ad6eA9?chain=arctic-1)
+
+### Sepolia testnet
+
+OFT contract: [`0xa9C316683dfBE81Be03C408340B5ab92295A8203`](https://sepolia.etherscan.io/address/0xa9c316683dfbe81be03c408340b5ab92295a8203)
+
+Token view: https://sepolia.etherscan.io/token/0xa9c316683dfbe81be03c408340b5ab92295a8203
+
+## Developing Contracts
+
+### Installing dependencies
 
 ```bash
 pnpm install
 ```
 
-#### Compiling your contracts
+### Compiling your contracts
 
-This project supports both `hardhat` and `forge` compilation. By default, the `compile` command will execute both:
+This project supports both `hardhat` and `forge` compilation:
 
 ```bash
 pnpm compile
@@ -51,16 +47,7 @@ pnpm compile:forge
 pnpm compile:hardhat
 ```
 
-Or adjust the `package.json` to for example remove `forge` build:
-
-```diff
-- "compile": "$npm_execpath run compile:forge && $npm_execpath run compile:hardhat",
-- "compile:forge": "forge build",
-- "compile:hardhat": "hardhat compile",
-+ "compile": "hardhat compile"
-```
-
-#### Running tests
+### Running tests
 
 Similarly to the contract compilation, we support both `hardhat` and `forge` tests. By default, the `test` command will execute both:
 
@@ -75,16 +62,7 @@ pnpm test:forge
 pnpm test:hardhat
 ```
 
-Or adjust the `package.json` to for example remove `hardhat` tests:
-
-```diff
-- "test": "$npm_execpath test:forge && $npm_execpath test:hardhat",
-- "test:forge": "forge test",
-- "test:hardhat": "$npm_execpath hardhat test"
-+ "test": "forge test"
-```
-
-## 2) Deploying Contracts
+## Deploying Contracts
 
 Set up deployer wallet/account:
 
@@ -111,10 +89,23 @@ More information about available CLI arguments can be found using the `--help` f
 npx hardhat lz:deploy --help
 ```
 
-By following these steps, you can focus more on creating innovative omnichain solutions and less on the complexities of cross-chain communication.
+Finally, to wire the contracts and create the paths:
 
-<br></br>
+```bash
+npx hardhat lz:oapp:wire --oapp-config testnet.layerzero.config.ts
+```
 
-<p align="center">
-  Join our community on <a href="https://discord-layerzero.netlify.app/discord" style="color: #a77dff">Discord</a> | Follow us on <a href="https://twitter.com/LayerZero_Labs" style="color: #a77dff">Twitter</a>
-</p>
+## Sending tokens
+
+The `lz:oft:send` hardhat task is available to send tokens through the LayerZero bridge, find below some examples:
+
+```bash
+# Send 1$ALLO from Sei devnet to Sepolia testnet, in that way there's 2 transactions, a first approval on the token pointer contract and then the send.
+npx hardhat lz:oft:send --amount 1000000 --to-network sepolia-testnet --network sei-devnet
+
+# Send 1$ALLO from Sei devnet to another wallet on Sepolia testnet
+npx hardhat lz:oft:send --amount 1000000 --to-network sepolia-testnet --network sei-devnet --to 0xCbe7f0aee92040aA91A7259A0474d6276Fa81AD8
+
+# Send 1$ALLO from Sepolia testnet to Sei devnet
+npx hardhat lz:oft:send --amount 1000000 --network sepolia-testnet --to-network sei-devnet
+```
