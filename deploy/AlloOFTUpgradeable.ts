@@ -27,7 +27,7 @@ const deploy: DeployFunction = async (hre) => {
             execute: {
                 init: {
                     methodName: 'initialize',
-                    args: ['Allo', 'ALLO', signer.address], // TODO: add name/symbol
+                    args: ['Allora', '$ALLO', signer.address, '0x0000000000000000000000000000000000000000'],
                 },
             },
         },

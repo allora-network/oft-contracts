@@ -7,7 +7,7 @@ import { AlloOFTUpgradeable } from "../AlloOFTUpgradeable.sol";
 contract AlloOFTUpgradeableMock is AlloOFTUpgradeable {
     constructor(address _lzEndpoint) AlloOFTUpgradeable(_lzEndpoint) {}
 
-    function mint(address _to, uint256 _amount) public {
+    function publicMint(address _to, uint256 _amount) public {
         _mint(_to, _amount);
     }
 }

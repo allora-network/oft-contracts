@@ -55,11 +55,15 @@ describe('AlloOFT Test', () => {
     it('should upgrade', async () => {
         // Deploying the upgradeable contract
         const AlloOFTUpgradeable = await ethers.getContractFactory('AlloOFTUpgradeable')
-        const alloOFTUpgradeable = await upgrades.deployProxy(AlloOFTUpgradeable, ['AlloOFT', 'ALLO', ownerA.address], {
-            initializer: 'initialize',
-            constructorArgs: [mockEndpointV2A.address],
-            unsafeAllow: ['constructor', 'state-variable-immutable', 'missing-initializer-call'],
-        })
+        const alloOFTUpgradeable = await upgrades.deployProxy(
+            AlloOFTUpgradeable,
+            ['Allora', '$ALLO', ownerA.address, ethers.constants.AddressZero],
+            {
+                initializer: 'initialize',
+                constructorArgs: [mockEndpointV2A.address],
+                unsafeAllow: ['constructor', 'state-variable-immutable', 'missing-initializer-call'],
+            }
+        )
         const alloOFTUpgradeableImpl = (await upgrades.admin.getInstance(ownerA)).functions.getProxyImplementation(
             alloOFTUpgradeable.address
         )
@@ -80,7 +84,7 @@ describe('AlloOFT Test', () => {
         expect(alloOFTUpgradeableImpl).to.not.equal(alloOFTUpgradeableMockImpl)
         const [intialBalance] = await alloOFTUpgradeableMock.functions.balanceOf(ownerA.address)
         // ensure we can mint now
-        await (await alloOFTUpgradeableMock.functions.mint(ownerA.address, 100)).wait()
+        await (await alloOFTUpgradeableMock.functions.publicMint(ownerA.address, 100)).wait()
         const [finalBalance] = await alloOFTUpgradeableMock.functions.balanceOf(ownerA.address)
         expect(finalBalance.toNumber()).to.equal(intialBalance.add(100).toNumber())
 
@@ -90,7 +94,12 @@ describe('AlloOFT Test', () => {
             AlloOFTUpgradeable,
             {
                 constructorArgs: [mockEndpointV2A.address],
-                unsafeAllow: ['constructor', 'state-variable-immutable', 'missing-initializer', 'missing-initializer-call'],
+                unsafeAllow: [
+                    'constructor',
+                    'state-variable-immutable',
+                    'missing-initializer',
+                    'missing-initializer-call',
+                ],
             }
         )
         // Ensure the proxy remains constant after the upgrade

@@ -14,7 +14,13 @@ contract AlloOFTUpgradeableTest is OFTTest {
             _deployContractAndProxy(
                 type(AlloOFTUpgradeable).creationCode,
                 abi.encode(address(endpoints[aEid])),
-                abi.encodeWithSelector(AlloOFTUpgradeable.initialize.selector, "Allo", "ALLO", address(this))
+                abi.encodeWithSelector(
+                    AlloOFTUpgradeable.initialize.selector,
+                    "Allora",
+                    "$ALLO",
+                    address(this),
+                    address(0)
+                )
             )
         );
 
@@ -24,7 +30,7 @@ contract AlloOFTUpgradeableTest is OFTTest {
         AlloOFTUpgradeable oftUpgradeableImplementation = AlloOFTUpgradeable(implementationAddress);
 
         vm.expectRevert(Initializable.InvalidInitialization.selector);
-        oftUpgradeableImplementation.initialize("Allo", "ALLO", address(this));
+        oftUpgradeableImplementation.initialize("Allora", "$ALLO", address(this), address(0));
 
         EndpointV2Mock endpoint = EndpointV2Mock(address(oftUpgradeable.endpoint()));
         assertEq(endpoint.delegates(address(oftUpgradeable)), address(this));
