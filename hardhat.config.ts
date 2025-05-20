@@ -5,16 +5,17 @@
 // - Fill in the environment variables
 import 'dotenv/config'
 
+import '@openzeppelin/hardhat-upgrades'
 import 'hardhat-deploy'
+import '@nomiclabs/hardhat-waffle'
+import 'hardhat-deploy-ethers'
 import 'hardhat-contract-sizer'
 import '@nomiclabs/hardhat-ethers'
 import '@layerzerolabs/toolbox-hardhat'
+
 import { HardhatUserConfig, HttpNetworkAccountsUserConfig } from 'hardhat/types'
 
 import { EndpointId } from '@layerzerolabs/lz-definitions'
-
-import './type-extensions'
-import './tasks/sendOFT'
 
 // Set your preferred authentication method
 //
@@ -60,13 +61,15 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL_SEPOLIA || 'https://rpc.sepolia.org/',
             accounts,
         },
-        'sei-devnet': {
-            eid: EndpointId.SEI_V2_TESTNET,
-            url: process.env.RPC_URL_ARCTIC1 || 'https://evm-rpc-arctic-1.sei-apis.com',
+        'avalanche-testnet': {
+            eid: EndpointId.AVALANCHE_V2_TESTNET,
+            url: process.env.RPC_URL_FUJI || 'https://rpc.ankr.com/avalanche_fuji',
             accounts,
-            oftAdapter: {
-                tokenAddress: '0xc7e7A1B625225fEd006B3DdF6f402e45664D266a', // Set the token address for the OFT adapter
-            },
+        },
+        'amoy-testnet': {
+            eid: EndpointId.AMOY_V2_TESTNET,
+            url: process.env.RPC_URL_AMOY || 'https://polygon-amoy-bor-rpc.publicnode.com',
+            accounts,
         },
         hardhat: {
             // Need this for testing because TestHelperOz5.sol is exceeding the compiled contract size limit
@@ -77,6 +80,12 @@ const config: HardhatUserConfig = {
         deployer: {
             default: 0, // wallet address of index[0], of the mnemonic in .env
         },
+    },
+    layerZero: {
+        // You can tell hardhat toolbox not to include any deployments (hover over the property name to see full docs)
+        deploymentSourcePackages: [],
+        // You can tell hardhat not to include any artifacts either
+        // artifactSourcePackages: [],
     },
 }
 
