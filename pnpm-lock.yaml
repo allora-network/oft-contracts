@@ -66,6 +66,9 @@ importers:
       '@layerzerolabs/toolbox-hardhat':
         specifier: ~0.6.9
         version: 0.6.9(@ethersproject/abstract-provider@5.8.0)(@ethersproject/abstract-signer@5.8.0)(@ethersproject/bignumber@5.8.0)(@ethersproject/constants@5.8.0)(@ethersproject/providers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(@nomicfoundation/hardhat-ethers@3.0.8(ethers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.24.0(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@18.18.14)(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10)))(@nomiclabs/hardhat-ethers@2.2.3(ethers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.24.0(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@18.18.14)(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10)))(bufferutil@4.0.9)(ethers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat-deploy@0.12.4(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.24.0(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@18.18.14)(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10))(solidity-bytes-utils@0.8.3)(utf-8-validate@5.0.10)
+      '@nomicfoundation/hardhat-verify':
+        specifier: ^2.0.13
+        version: 2.0.13(hardhat@2.24.0(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@18.18.14)(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10))
       '@nomiclabs/hardhat-ethers':
         specifier: ^2.2.3
         version: 2.2.3(ethers@5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(hardhat@2.24.0(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@18.18.14)(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10))
@@ -863,6 +866,11 @@ packages:
     peerDependencies:
       ethers: ^5.7.2
       hardhat: ^2.0.0
+
+  '@nomicfoundation/hardhat-verify@2.0.13':
+    resolution: {integrity: sha512-i57GX1sC0kYGyRVnbQrjjyBTpWTKgrvKC+jH8CMKV6gHp959Upb8lKaZ58WRHIU0espkulTxLnacYeUDirwJ2g==}
+    peerDependencies:
+      hardhat: ^2.0.4
 
   '@nomicfoundation/slang@0.18.3':
     resolution: {integrity: sha512-YqAWgckqbHM0/CZxi9Nlf4hjk9wUNLC9ngWCWBiqMxPIZmzsVKYuChdlrfeBPQyvQQBoOhbx+7C1005kLVQDZQ==}
@@ -3275,6 +3283,9 @@ packages:
   lodash.camelcase@4.3.0:
     resolution: {integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==}
 
+  lodash.clonedeep@4.5.0:
+    resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
+
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
     deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
@@ -5257,7 +5268,7 @@ snapshots:
   '@ethereumjs/common@2.6.0':
     dependencies:
       crc-32: 1.2.2
-      ethereumjs-util: 7.1.3
+      ethereumjs-util: 7.1.5
 
   '@ethereumjs/common@2.6.5':
     dependencies:
@@ -5278,8 +5289,8 @@ snapshots:
 
   '@ethereumjs/tx@3.4.0':
     dependencies:
-      '@ethereumjs/common': 2.6.0
-      ethereumjs-util: 7.1.3
+      '@ethereumjs/common': 2.6.5
+      ethereumjs-util: 7.1.5
 
   '@ethereumjs/tx@3.5.2':
     dependencies:
@@ -5301,12 +5312,12 @@ snapshots:
     dependencies:
       '@ethereumjs/block': 3.6.3
       '@ethereumjs/blockchain': 5.5.3
-      '@ethereumjs/common': 2.6.0
-      '@ethereumjs/tx': 3.4.0
+      '@ethereumjs/common': 2.6.5
+      '@ethereumjs/tx': 3.5.2
       async-eventemitter: 0.2.4
       core-js-pure: 3.42.0
       debug: 2.6.9
-      ethereumjs-util: 7.1.3
+      ethereumjs-util: 7.1.5
       functional-red-black-tree: 1.0.1
       mcl-wasm: 0.7.9
       merkle-patricia-tree: 4.2.4
@@ -6085,6 +6096,21 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@nomicfoundation/hardhat-verify@2.0.13(hardhat@2.24.0(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@18.18.14)(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@ethersproject/abi': 5.8.0
+      '@ethersproject/address': 5.8.0
+      cbor: 8.1.0
+      debug: 4.4.1(supports-color@8.1.1)
+      hardhat: 2.24.0(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@18.18.14)(typescript@5.8.3))(typescript@5.8.3)(utf-8-validate@5.0.10)
+      lodash.clonedeep: 4.5.0
+      picocolors: 1.1.1
+      semver: 6.3.1
+      table: 6.9.0
+      undici: 5.29.0
+    transitivePeerDependencies:
+      - supports-color
+
   '@nomicfoundation/slang@0.18.3':
     dependencies:
       '@bytecodealliance/preview2-shim': 0.17.0
@@ -6707,7 +6733,7 @@ snapshots:
   abstract-leveldown@6.2.3:
     dependencies:
       buffer: 5.7.1
-      immediate: 3.2.3
+      immediate: 3.3.0
       level-concat-iterator: 2.0.1
       level-supports: 1.0.1
       xtend: 4.0.2
@@ -7697,7 +7723,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -7738,7 +7764,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -9018,6 +9044,8 @@ snapshots:
   lodash.assign@4.2.0: {}
 
   lodash.camelcase@4.3.0: {}
+
+  lodash.clonedeep@4.5.0: {}
 
   lodash.isequal@4.5.0: {}
 

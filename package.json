@@ -43,6 +43,7 @@
     "@layerzerolabs/test-devtools-evm-foundry": "~6.0.3",
     "@layerzerolabs/toolbox-foundry": "~0.1.12",
     "@layerzerolabs/toolbox-hardhat": "~0.6.9",
+    "@nomicfoundation/hardhat-verify": "^2.0.13",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@nomiclabs/hardhat-waffle": "^2.0.6",
     "@openzeppelin/contracts": "^5.0.2",

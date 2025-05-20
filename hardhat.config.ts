@@ -11,11 +11,14 @@ import '@nomiclabs/hardhat-waffle'
 import 'hardhat-deploy-ethers'
 import 'hardhat-contract-sizer'
 import '@nomiclabs/hardhat-ethers'
+import '@nomiclabs/hardhat-etherscan'
 import '@layerzerolabs/toolbox-hardhat'
 
 import { HardhatUserConfig, HttpNetworkAccountsUserConfig } from 'hardhat/types'
 
 import { EndpointId } from '@layerzerolabs/lz-definitions'
+
+import './tasks/sendOFT'
 
 // Set your preferred authentication method
 //
@@ -61,20 +64,31 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL_SEPOLIA || 'https://rpc.sepolia.org/',
             accounts,
         },
-        'avalanche-testnet': {
-            eid: EndpointId.AVALANCHE_V2_TESTNET,
-            url: process.env.RPC_URL_FUJI || 'https://rpc.ankr.com/avalanche_fuji',
-            accounts,
-        },
-        'amoy-testnet': {
-            eid: EndpointId.AMOY_V2_TESTNET,
-            url: process.env.RPC_URL_AMOY || 'https://polygon-amoy-bor-rpc.publicnode.com',
+        'base-sepolia-testnet': {
+            eid: EndpointId.BASESEP_V2_TESTNET,
+            url: process.env.RPC_URL_BASE_SEPOLIA,
             accounts,
         },
         hardhat: {
             // Need this for testing because TestHelperOz5.sol is exceeding the compiled contract size limit
             allowUnlimitedContractSize: true,
         },
+    },
+    etherscan: {
+        apiKey: {
+            sepolia: process.env.ETHERSCAN_API_KEY || '',
+            'base-sepolia-testnet': 'UXNY2FMKHI56IKWP7ST251KY2HGVQA216G',
+        },
+        customChains: [
+            {
+                network: 'base-sepolia-testnet',
+                chainId: 84532,
+                urls: {
+                    apiURL: 'https://api-sepolia.basescan.org/api',
+                    browserURL: 'https://sepolia.basescan.org',
+                },
+            },
+        ],
     },
     namedAccounts: {
         deployer: {
