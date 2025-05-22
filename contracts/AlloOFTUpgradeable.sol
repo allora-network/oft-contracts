@@ -107,7 +107,7 @@ contract AlloOFTUpgradeable is OFTUpgradeable, IMintableAndBurnable {
      * @dev Only the owner can update the ICS20 Proxy contract address
      * @param _newIcs20Proxy The new address of the ICS20 Proxy contract
      */
-    function setIcs20Proxy(address _newIcs20Proxy) public onlyOwner {
+    function setICS20Proxy(address _newIcs20Proxy) public onlyOwner {
         address oldProxy = ics20Proxy;
         ics20Proxy = _newIcs20Proxy;
         emit Ics20ProxyUpdated(oldProxy, _newIcs20Proxy);
