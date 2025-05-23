@@ -35,7 +35,7 @@ contract AlloOFTTestUpgrade is AlloOFTUpgradeable {
 
     constructor(address _endpoint) AlloOFTUpgradeable(_endpoint) {}
 
-    function upgradeWorked() public returns (bool) {
+    function upgradeWorked() public pure returns (bool) {
         return true;
     }
 
@@ -52,7 +52,7 @@ contract AlloOFTUpgradeableTest is OFTTest {
     MockICS20TransferProxy ics20TransferProxy;
 
     address delegate = makeAddr("delegate");
-    address proxyAdmin;
+    address proxyAdminContractAddress;
 
     // Events
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -95,7 +95,7 @@ contract AlloOFTUpgradeableTest is OFTTest {
 
         // Load Allora OFT proxy admin address
         bytes32 adminRaw = vm.load(address(alloErc20), ADMIN_SLOT);
-        proxyAdmin = address(uint160(uint256(adminRaw)));
+        proxyAdminContractAddress = address(uint160(uint256(adminRaw)));
     }
 
     // ================================
@@ -324,7 +324,7 @@ contract AlloOFTUpgradeableTest is OFTTest {
     }
 
     function test_proxyAdminOwnership() public {
-        ProxyAdmin proxyAdminContract = ProxyAdmin(proxyAdmin);
+        ProxyAdmin proxyAdminContract = ProxyAdmin(proxyAdminContractAddress);
         assertEq(proxyAdminContract.owner(), proxyAdminOwner);
 
         address newOwner = makeAddr("newOwner");
@@ -343,7 +343,7 @@ contract AlloOFTUpgradeableTest is OFTTest {
 
     // Test upgrade functionality
     function test_upgradeIsSuccessful() public {
-        ProxyAdmin proxyAdminContract = ProxyAdmin(proxyAdmin);
+        ProxyAdmin proxyAdminContract = ProxyAdmin(proxyAdminContractAddress);
 
         // Get the current implementation address
         bytes32 implementationRaw = vm.load(address(alloErc20), IMPLEMENTATION_SLOT);
@@ -398,7 +398,7 @@ contract AlloOFTUpgradeableTest is OFTTest {
         AlloOFTTestUpgrade newImplementation = new AlloOFTTestUpgrade(address(endpoints[aEid]));
 
         // Get proxy admin
-        ProxyAdmin proxyAdminContract = ProxyAdmin(proxyAdmin);
+        ProxyAdmin proxyAdminContract = ProxyAdmin(proxyAdminContractAddress);
 
         // Cast the proxy to ITransparentUpgradeableProxy
         ITransparentUpgradeableProxy proxy = ITransparentUpgradeableProxy(address(alloErc20));
