@@ -7,6 +7,7 @@ import { AlloOFTUpgradeable, IMintableAndBurnable } from "../../contracts/AlloOF
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import { ProxyAdmin } from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 import { console } from "forge-std/console.sol";
+import { ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 contract MockICS20TransferProxy {
   IMintableAndBurnable public mintableBurnableToken;
@@ -29,15 +30,29 @@ contract MockICS20TransferProxy {
 
 contract MockICS20TransferProxy2 is MockICS20TransferProxy {}
 
+contract AlloOFTTestUpgrade is AlloOFTUpgradeable {
+  bool public wasUpgradeFunctionCalled = false;
+
+  constructor(address _endpoint) AlloOFTUpgradeable(_endpoint) {}
+
+  function upgradeWorked() public returns (bool) {
+    return true;
+  }
+
+  function upgradeFunction() public {
+    wasUpgradeFunctionCalled = true;
+  }
+}
 
 contract AlloOFTUpgradeableTest is OFTTest {
     bytes32 internal constant IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
+    bytes32 internal constant ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
 
     AlloOFTUpgradeable alloErc20;
     MockICS20TransferProxy ics20TransferProxy;
 
     address delegate = makeAddr("delegate");
-    address proxyOwner = makeAddr("proxyOwner");
+    address proxyAdmin;
 
     // Events
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -57,9 +72,11 @@ contract AlloOFTUpgradeableTest is OFTTest {
       super.setUp();
 
       // Deploy the AlloOFTUpgradeable contract and the ICS20TransferProxy contract
-      vm.startPrank(proxyOwner);
       ics20TransferProxy = new MockICS20TransferProxy();
       alloErc20 = AlloOFTUpgradeable(
+        // @note: the proxy admin is a ProxyAdmin contract that is deployed in the OFTTest contract
+        // the proxy admin owner is set in the proxyAdminOwner variable
+        // the proxy admin contract address is set in the proxyAdmin variable
         _deployContractAndProxy(
           type(AlloOFTUpgradeable).creationCode,
           abi.encode(address(endpoints[aEid])),
@@ -75,14 +92,17 @@ contract AlloOFTUpgradeableTest is OFTTest {
 
       // Set the mintableBurnableToken address in the ICS20TransferProxy contract
       ics20TransferProxy.setMintableBurnableToken(address(alloErc20));
-      vm.stopPrank();
+
+      // Load Allora OFT proxy admin address
+      bytes32 adminRaw = vm.load(address(alloErc20), ADMIN_SLOT);
+      proxyAdmin = address(uint160(uint256(adminRaw)));
     }
 
     // ================================
     // Implementation tests
     // ================================
 
-    function test_alloErc20Deployment() public view {
+    function test_alloErc20DeploymentInitialization() public view {
       AlloOFTUpgradeable alloErc20Upgradeable = AlloOFTUpgradeable(address(alloErc20));
       assertEq(address(alloErc20Upgradeable.owner()), delegate);
       assertEq(address(alloErc20Upgradeable.ics20Proxy()), address(ics20TransferProxy));
@@ -285,21 +305,7 @@ contract AlloOFTUpgradeableTest is OFTTest {
     // ================================
 
     function test_oftImplementationInitializationDisabled() public {
-        AlloOFTUpgradeable oftUpgradeable = AlloOFTUpgradeable(
-            _deployContractAndProxy(
-                type(AlloOFTUpgradeable).creationCode,
-                abi.encode(address(endpoints[aEid])),
-                abi.encodeWithSelector(
-                    AlloOFTUpgradeable.initialize.selector,
-                    "Allora",
-                    "$ALLO",
-                    address(this),
-                    address(0)
-                )
-            )
-        );
-
-        bytes32 implementationRaw = vm.load(address(oftUpgradeable), IMPLEMENTATION_SLOT);
+        bytes32 implementationRaw = vm.load(address(alloErc20), IMPLEMENTATION_SLOT);
         address implementationAddress = address(uint160(uint256(implementationRaw)));
 
         AlloOFTUpgradeable oftUpgradeableImplementation = AlloOFTUpgradeable(implementationAddress);
@@ -307,9 +313,131 @@ contract AlloOFTUpgradeableTest is OFTTest {
         vm.expectRevert(Initializable.InvalidInitialization.selector);
         oftUpgradeableImplementation.initialize("Allora", "$ALLO", address(this), address(0));
 
-        EndpointV2Mock endpoint = EndpointV2Mock(address(oftUpgradeable.endpoint()));
-        assertEq(endpoint.delegates(address(oftUpgradeable)), address(this));
+        EndpointV2Mock endpoint = EndpointV2Mock(address(alloErc20.endpoint()));
+        assertEq(endpoint.delegates(address(alloErc20)), delegate);
         assertEq(endpoint.delegates(implementationAddress), address(0));
     }
 
+    function test_cannotInitializeTwice() public {
+      vm.expectRevert(Initializable.InvalidInitialization.selector);
+      alloErc20.initialize("Allora", "$ALLO", delegate, address(ics20TransferProxy));
+    }
+
+    function test_proxyAdminOwnership() public {
+        ProxyAdmin proxyAdminContract = ProxyAdmin(proxyAdmin);
+        assertEq(proxyAdminContract.owner(), proxyAdminOwner);
+        
+        address newOwner = makeAddr("newOwner");
+        
+        // Non-owner cannot transfer ownership
+        vm.expectRevert(abi.encodeWithSelector(OwnableUnauthorizedAccount.selector, address(this)));
+        proxyAdminContract.transferOwnership(newOwner);
+        
+        // Owner can transfer ownership
+        vm.startPrank(proxyAdminOwner);
+        proxyAdminContract.transferOwnership(newOwner);
+        vm.stopPrank();
+        
+        assertEq(proxyAdminContract.owner(), newOwner);
+    }
+
+    // Test upgrade functionality
+    function test_upgradeIsSuccessful() public {
+      ProxyAdmin proxyAdminContract = ProxyAdmin(proxyAdmin);
+
+      // Get the current implementation address
+      bytes32 implementationRaw = vm.load(address(alloErc20), IMPLEMENTATION_SLOT);
+      address initialImplementationAddress = address(uint160(uint256(implementationRaw)));
+      
+      // Deploy new implementation
+      AlloOFTTestUpgrade newImplementation = new AlloOFTTestUpgrade(address(endpoints[aEid]));
+
+      // Cast the proxy to ITransparentUpgradeableProxy
+      ITransparentUpgradeableProxy transparentUpgradeableProxy = ITransparentUpgradeableProxy(address(alloErc20));
+
+      // Non-owner cannot upgrade
+      vm.expectRevert(abi.encodeWithSelector(OwnableUnauthorizedAccount.selector, address(this)));
+      proxyAdminContract.upgradeAndCall(
+          transparentUpgradeableProxy,
+          address(newImplementation),
+          "" // no initialization call
+      );
+      
+      // Owner can upgrade
+      vm.startPrank(proxyAdminOwner);
+      proxyAdminContract.upgradeAndCall(
+          transparentUpgradeableProxy,
+          address(newImplementation),
+          "" // no initialization call
+      );
+      vm.stopPrank();
+      
+      // Verify new implementation is set
+      bytes32 currentImplementationRaw = vm.load(address(alloErc20), IMPLEMENTATION_SLOT);
+      address currentImplementationAddress = address(uint160(uint256(currentImplementationRaw)));
+      assertEq(currentImplementationAddress, address(newImplementation));
+      assertNotEq(currentImplementationAddress, initialImplementationAddress);
+      
+      // Verify state is preserved
+      assertEq(alloErc20.name(), "Allora");
+      assertEq(alloErc20.symbol(), "$ALLO");
+      assertEq(alloErc20.owner(), delegate);
+      assertEq(alloErc20.ics20Proxy(), address(ics20TransferProxy));
+      
+      // Verify we can call new implementation's function
+      assertTrue(AlloOFTTestUpgrade(address(alloErc20)).upgradeWorked());
+      assertFalse(AlloOFTTestUpgrade(address(alloErc20)).wasUpgradeFunctionCalled());
+    }
+
+    function test_upgradeWithFunctionCall() public {
+      // Get initial implementation address
+      bytes32 implementationRaw = vm.load(address(alloErc20), IMPLEMENTATION_SLOT);
+      address initialImplementationAddress = address(uint160(uint256(implementationRaw)));
+      
+      // Deploy new implementation
+      AlloOFTTestUpgrade newImplementation = new AlloOFTTestUpgrade(address(endpoints[aEid]));
+
+      // Get proxy admin
+      ProxyAdmin proxyAdminContract = ProxyAdmin(proxyAdmin);
+      
+      // Cast the proxy to ITransparentUpgradeableProxy
+      ITransparentUpgradeableProxy proxy = ITransparentUpgradeableProxy(address(alloErc20));
+      
+      // Prepare the function call data
+      bytes memory upgradeFunctionCall = abi.encodeWithSelector(AlloOFTTestUpgrade.upgradeFunction.selector);
+      
+      // Non-owner cannot upgrade
+      vm.expectRevert(abi.encodeWithSelector(OwnableUnauthorizedAccount.selector, address(this)));
+      proxyAdminContract.upgradeAndCall(
+          proxy,
+          address(newImplementation),
+          upgradeFunctionCall
+      );
+      
+      // Owner can upgrade and call function
+      vm.startPrank(proxyAdminOwner);
+      proxyAdminContract.upgradeAndCall(
+          proxy,
+          address(newImplementation),
+          upgradeFunctionCall
+      );
+      vm.stopPrank();
+      
+      // Verify new implementation is set
+      bytes32 currentImplementationRaw = vm.load(address(alloErc20), IMPLEMENTATION_SLOT);
+      address currentImplementationAddress = address(uint160(uint256(currentImplementationRaw)));
+      assertEq(currentImplementationAddress, address(newImplementation));
+      assertNotEq(currentImplementationAddress, initialImplementationAddress);
+      
+      // Verify state is preserved
+      assertEq(alloErc20.name(), "Allora");
+      assertEq(alloErc20.symbol(), "$ALLO");
+      assertEq(alloErc20.owner(), delegate);
+      assertEq(alloErc20.ics20Proxy(), address(ics20TransferProxy));
+      
+      // Verify the upgrade function was called
+      AlloOFTTestUpgrade upgradedContract = AlloOFTTestUpgrade(address(alloErc20));
+      assertTrue(upgradedContract.wasUpgradeFunctionCalled());
+  }
 }
+
