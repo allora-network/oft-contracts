@@ -101,7 +101,7 @@ The `lz:oft:send` hardhat task is available to send tokens through the LayerZero
 
 ```bash
 # Send 1$ALLO from Base Sepolia devnet to Ethereum Sepolia testnet, in that way there's 2 transactions, a first approval on the token pointer contract and then the send.
-npx hardhat lz:oft:send --amount 1000000 --to-network sepolia-testnet --network base-sepolia-testnet 
+npx hardhat lz:oft:send --amount 1000000 --to-network sepolia-testnet --network base-sepolia-testnet
 
 # Send 1$ALLO from Base Sepolia to another wallet on Etheruem Sepolia testnet
 npx hardhat lz:oft:send --amount 1000000 --to-network sepolia-testnet --network base-sepolia-testnet --to 0xCbe7f0aee92040aA91A7259A0474d6276Fa81AD8
