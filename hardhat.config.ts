@@ -66,7 +66,7 @@ const config: HardhatUserConfig = {
         },
         'base-sepolia-testnet': {
             eid: EndpointId.BASESEP_V2_TESTNET,
-            url: process.env.RPC_URL_BASE_SEPOLIA,
+            url: process.env.RPC_URL_BASE_SEPOLIA || 'https://sepolia.base.org',
             accounts,
         },
         hardhat: {
