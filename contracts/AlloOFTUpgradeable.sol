@@ -38,10 +38,10 @@ contract AlloOFTUpgradeable is OFTUpgradeable, IMintableAndBurnable {
 
     /**
      * @dev Emitted when the ICS20 proxy address is updated
-     * @param oldIcs20Proxy Previous ICS20 proxy address
-     * @param newIcs20Proxy New ICS20 proxy address
+     * @param oldICS20Proxy Previous ICS20 proxy address
+     * @param newICS20Proxy New ICS20 proxy address
      */
-    event Ics20ProxyUpdated(address indexed oldIcs20Proxy, address indexed newIcs20Proxy);
+    event ICS20ProxyUpdated(address indexed oldICS20Proxy, address indexed newICS20Proxy);
 
     /*//////////////////////////////////////////////////////////////
                                  ERRORS
@@ -105,12 +105,12 @@ contract AlloOFTUpgradeable is OFTUpgradeable, IMintableAndBurnable {
 
     /**
      * @dev Only the owner can update the ICS20 Proxy contract address
-     * @param _newIcs20Proxy The new address of the ICS20 Proxy contract
+     * @param _newICS20Proxy The new address of the ICS20 Proxy contract
      */
-    function setICS20Proxy(address _newIcs20Proxy) public onlyOwner {
+    function setICS20Proxy(address _newICS20Proxy) public onlyOwner {
         address oldProxy = ics20Proxy;
-        ics20Proxy = _newIcs20Proxy;
-        emit Ics20ProxyUpdated(oldProxy, _newIcs20Proxy);
+        ics20Proxy = _newICS20Proxy;
+        emit ICS20ProxyUpdated(oldProxy, _newICS20Proxy);
     }
 
     /*//////////////////////////////////////////////////////////////
