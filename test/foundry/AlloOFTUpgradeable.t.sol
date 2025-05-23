@@ -75,8 +75,7 @@ contract AlloOFTUpgradeableTest is OFTTest {
         ics20TransferProxy = new MockICS20TransferProxy();
         alloErc20 = AlloOFTUpgradeable(
             // @note: the proxy admin is a ProxyAdmin contract that is deployed in the OFTTest contract
-            // the proxy admin owner is set in the proxyAdminOwner variable
-            // the proxy admin contract address is set in the proxyAdmin variable
+            // the proxy admin owner is set in the proxyAdmin variable
             _deployContractAndProxy(
                 type(AlloOFTUpgradeable).creationCode,
                 abi.encode(address(endpoints[aEid])),
@@ -325,7 +324,7 @@ contract AlloOFTUpgradeableTest is OFTTest {
 
     function test_proxyAdminOwnership() public {
         ProxyAdmin proxyAdminContract = ProxyAdmin(proxyAdminContractAddress);
-        assertEq(proxyAdminContract.owner(), proxyAdminOwner);
+        assertEq(proxyAdminContract.owner(), proxyAdmin);
 
         address newOwner = makeAddr("newOwner");
 
@@ -334,7 +333,7 @@ contract AlloOFTUpgradeableTest is OFTTest {
         proxyAdminContract.transferOwnership(newOwner);
 
         // Owner can transfer ownership
-        vm.startPrank(proxyAdminOwner);
+        vm.startPrank(proxyAdmin);
         proxyAdminContract.transferOwnership(newOwner);
         vm.stopPrank();
 
@@ -364,7 +363,7 @@ contract AlloOFTUpgradeableTest is OFTTest {
         );
 
         // Owner can upgrade
-        vm.startPrank(proxyAdminOwner);
+        vm.startPrank(proxyAdmin);
         proxyAdminContract.upgradeAndCall(
             transparentUpgradeableProxy,
             address(newImplementation),
@@ -411,7 +410,7 @@ contract AlloOFTUpgradeableTest is OFTTest {
         proxyAdminContract.upgradeAndCall(proxy, address(newImplementation), upgradeFunctionCall);
 
         // Owner can upgrade and call function
-        vm.startPrank(proxyAdminOwner);
+        vm.startPrank(proxyAdmin);
         proxyAdminContract.upgradeAndCall(proxy, address(newImplementation), upgradeFunctionCall);
         vm.stopPrank();
 
