@@ -1,53 +1,86 @@
-# oft-contracts
+# ALLO OFT Contracts
+This repository contains the smart contract implementation for the **ALLO** ERC20, which is designed to be both OFT (Omnichain Fungible Token) compliant and compatible with the Eureka bridging solution for cross-chain interoperability between EVM and Cosmos chains.
 
-This repository contains sources of OFT contracts related to the **\$ALLO** token, and reference its deployments on different networks.
+## Overview
+
+The `AlloOFTUpgradeable` contract is an upgradeable implementation that combines:
+- OFT compliance for cross-chain token transfers
+- Eureka bridging compatibility through the `IMintableAndBurnable` interface
+- Upgradeable architecture for future improvements
+
+The token has 18 decimals on EVM chains and uses 6 shared decimals for cross-chain operations and implements specific security measures for supply management through the ICS20 proxy contract.
+
+## Key Features
+
+- **Cross-Chain Compatibility**: Supports both LayerZero's OFT standard and Eureka's bridging solution
+- **Upgradeable**: Built with upgradeability in mind for future improvements
+- **Supply Management**: Controlled minting and burning through authorized ICS20 proxy
+- **Security**: Strict access controls for supply modifications
+- **Standard Compliance**: Implements both `OFT` and `IMintableAndBurnable` interfaces
+
+## Key Functions
+
+- `initialize`: Sets up the token with name, symbol, delegate, and ICS20 proxy
+- `mint`: Creates new tokens (restricted to ICS20 proxy)
+- `burn`: Destroys tokens (restricted to ICS20 proxy)
+- `setICS20Proxy`: Updates the ICS20 proxy address (owner only)
+
+## Security Considerations
+
+- Supply modifications (mint/burn) are restricted to the ICS20 proxy contract
+- The contract is upgradeable, allowing for future improvements
+- Strict access controls for administrative functions
+- Implementation of standard interfaces for interoperability
+
+
+## Development
+
+### Compilation
+```bash
+# Compile both Hardhat and Foundry contracts
+pnpm compile
+
+# Compile only Hardhat contracts
+pnpm compile:hardhat
+
+# Compile only Foundry contracts
+pnpm compile:forge
+```
+
+### Testing
+```bash
+# Run all tests
+pnpm test
+
+# Run only Hardhat tests
+pnpm test:hardhat
+
+# Run only Foundry tests
+pnpm test:forge
+```
+
+### Linting
+```bash
+# Run all linters
+pnpm lint
+
+# Fix linting issues
+pnpm lint:fix
+```
 
 ## Deployments
 
-### Details
-
-The native **\$ALLO** comes from the Allora Cosmos SDK based blockchain, in order to make it available to LayerZero ecosystem it is bridged with the Sei network over IBC (i.e. a Cosmos SDK based chain with EVM capabilities). From Sei a token pointer contract makes the native **\$ALLO** token available through an ERC-20 on EVM side, the `AlloOFTAdapter` contract is then used using this pointer as inner token to make it available to the LZ ecosystem. The other networks have the `AlloOFT` contract deployed.
-
-When sending tokens from Sei side, as the OFT adapter manages an ERC-20 2 transactions are needed, a first one to approche the adapter to spend tokens from the ERC-20 and then the lz send.
-
 ### Testnets
 
-### Sei devnet
+- Base Sepolia
+OFT contract: [`0xff5ba7b0b2de8b1bc9fb2e67142461442b40c820`](https://sepolia.basescan.org/address/0xff5ba7b0b2de8b1bc9fb2e67142461442b40c820)
 
-Token pointer contract: [`0xc7e7A1B625225fEd006B3DdF6f402e45664D266a`](https://seitrace.com/address/0xc7e7A1B625225fEd006B3DdF6f402e45664D266a?chain=arctic-1)
+- Ethreum Sepolia 
+OFT contract: [`0x6cb5249164657905a2d9d4fdf3f928c0d2238c34`](https://sepolia.etherscan.io/address/0x6cb5249164657905a2d9d4fdf3f928c0d2238c34)
 
-OFT adapter contract: [`0x7A8e661524daf2c41AC1df0bAa91f42098Ad6eA9`](https://seitrace.com/address/0x7A8e661524daf2c41AC1df0bAa91f42098Ad6eA9?chain=arctic-1)
+Token view: https://sepolia.etherscan.io/address/0x6cb5249164657905a2d9d4fdf3f928c0d2238c34
 
-### Sepolia testnet
-
-OFT contract: [`0xa9C316683dfBE81Be03C408340B5ab92295A8203`](https://sepolia.etherscan.io/address/0xa9c316683dfbe81be03c408340b5ab92295a8203)
-
-Token view: https://sepolia.etherscan.io/token/0xa9c316683dfbe81be03c408340b5ab92295a8203
-
-## Developing Contracts
-
-### Installing dependencies
-
-```bash
-pnpm install
-```
-
-### Compiling your contracts
-
-This project supports both `hardhat` and `forge` compilation:
-
-```bash
-pnpm compile
-```
-
-If you prefer one over the other, you can use the tooling-specific commands:
-
-```bash
-pnpm compile:forge
-pnpm compile:hardhat
-```
-
-### Running tests
+### Testing transfers between EVM chains
 
 Similarly to the contract compilation, we support both `hardhat` and `forge` tests. By default, the `test` command will execute both:
 
