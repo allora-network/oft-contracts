@@ -1,9 +1,11 @@
 # ALLO OFT Contracts
+
 This repository contains the smart contract implementation for the **ALLO** ERC20, which is designed to be both OFT (Omnichain Fungible Token) compliant and compatible with the Eureka bridging solution for cross-chain interoperability between EVM and Cosmos chains.
 
 ## Overview
 
 The `AlloOFTUpgradeable` contract is an upgradeable implementation that combines:
+
 - OFT compliance for cross-chain token transfers
 - Eureka bridging compatibility through the `IMintableAndBurnable` interface
 - Upgradeable architecture for future improvements
@@ -32,10 +34,10 @@ The token has 18 decimals on EVM chains and uses 6 shared decimals for cross-cha
 - Strict access controls for administrative functions
 - Implementation of standard interfaces for interoperability
 
-
 ## Development
 
 ### Compilation
+
 ```bash
 # Compile both Hardhat and Foundry contracts
 pnpm compile
@@ -48,6 +50,7 @@ pnpm compile:forge
 ```
 
 ### Testing
+
 ```bash
 # Run all tests
 pnpm test
@@ -60,6 +63,7 @@ pnpm test:forge
 ```
 
 ### Linting
+
 ```bash
 # Run all linters
 pnpm lint
@@ -73,10 +77,10 @@ pnpm lint:fix
 ### Testnets
 
 - Base Sepolia
-OFT contract: [`0xff5ba7b0b2de8b1bc9fb2e67142461442b40c820`](https://sepolia.basescan.org/address/0xff5ba7b0b2de8b1bc9fb2e67142461442b40c820)
+  OFT contract: [`0xff5ba7b0b2de8b1bc9fb2e67142461442b40c820`](https://sepolia.basescan.org/address/0xff5ba7b0b2de8b1bc9fb2e67142461442b40c820)
 
-- Ethreum Sepolia 
-OFT contract: [`0x6cb5249164657905a2d9d4fdf3f928c0d2238c34`](https://sepolia.etherscan.io/address/0x6cb5249164657905a2d9d4fdf3f928c0d2238c34)
+- Ethreum Sepolia
+  OFT contract: [`0x6cb5249164657905a2d9d4fdf3f928c0d2238c34`](https://sepolia.etherscan.io/address/0x6cb5249164657905a2d9d4fdf3f928c0d2238c34)
 
 Token view: https://sepolia.etherscan.io/address/0x6cb5249164657905a2d9d4fdf3f928c0d2238c34
 
