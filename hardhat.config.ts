@@ -13,6 +13,7 @@ import 'hardhat-contract-sizer'
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-etherscan'
 import '@layerzerolabs/toolbox-hardhat'
+import '@nomicfoundation/hardhat-foundry'
 
 import { HardhatUserConfig, HttpNetworkAccountsUserConfig } from 'hardhat/types'
 
@@ -48,7 +49,7 @@ const config: HardhatUserConfig = {
     solidity: {
         compilers: [
             {
-                version: '0.8.22',
+                version: '0.8.28',
                 settings: {
                     optimizer: {
                         enabled: true,

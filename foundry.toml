@@ -1,5 +1,5 @@
 [profile.default]
-solc-version = '0.8.22'
+solc-version = '0.8.28'
 src = 'contracts'
 out = 'out'
 test = 'test/foundry'
@@ -16,6 +16,7 @@ libs = [
     # - solidity-bytes-utils
     'node_modules/@layerzerolabs/toolbox-foundry/lib',
     'node_modules',
+    'lib'
 ]
 
 remappings = [
@@ -25,5 +26,6 @@ remappings = [
     # To remedy this, we'll remap the ds-test and forge-std imports to ou own versions
     'ds-test/=node_modules/@layerzerolabs/toolbox-foundry/lib/ds-test',
     'forge-std/=node_modules/@layerzerolabs/toolbox-foundry/lib/forge-std',
-    '@layerzerolabs/=node_modules/@layerzerolabs/'
+    '@layerzerolabs/=node_modules/@layerzerolabs/',
+    '@cosmos/solidity-ibc-eureka/=lib/solidity-ibc-eureka/'
 ]

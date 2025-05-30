@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.28;
 
 import { OFTTest } from "@layerzerolabs/oft-evm-upgradeable/test/OFT.t.sol";
 import { EndpointV2Mock } from "@layerzerolabs/test-devtools-evm-foundry/contracts/mocks/EndpointV2Mock.sol";
-import { AlloOFTUpgradeable, IMintableAndBurnable } from "../../contracts/AlloOFTUpgradeable.sol";
+import { AlloOFTUpgradeable} from "../../contracts/AlloOFTUpgradeable.sol";
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import { ProxyAdmin } from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
-import { console } from "forge-std/console.sol";
 import { ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
+import { IMintableAndBurnable } from "@cosmos/solidity-ibc-eureka/contracts/interfaces/IMintableAndBurnable.sol";
 
 contract MockICS20TransferProxy {
     IMintableAndBurnable public mintableBurnableToken;
@@ -19,7 +19,6 @@ contract MockICS20TransferProxy {
 
     // @dev This is a mock function for showcasing triggering the mint function on the AlloOFTUpgradeable contract
     function bridgeTokensFromCosmosToEvm(address _to, uint256 _amount) public {
-        console.log("bridgeTokensFromCosmosToEvm", _to, _amount);
         mintableBurnableToken.mint(_to, _amount);
     }
 

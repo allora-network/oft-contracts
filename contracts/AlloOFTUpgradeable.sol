@@ -1,31 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
-pragma solidity ^0.8.22;
+pragma solidity ^0.8.28;
 
 import { OFTUpgradeable } from "@layerzerolabs/oft-evm-upgradeable/contracts/oft/OFTUpgradeable.sol";
-
-/**
- * @title IMintableAndBurnable
- * @dev Interface for ensuring compatibility for bridging between EVM and Cosmos chains
- * @notice Defines the minimum required functions for tokens that can be minted and burned
- * @custom:source https://github.com/cosmos/solidity-ibc-eureka/blob/main/contracts/interfaces/IMintableAndBurnable.sol
- */
-interface IMintableAndBurnable {
-    /**
-     * @notice Mints new tokens to a specified address
-     * @dev Must only be callable by authorized contracts (e.g., ICS20 Proxy Contract)
-     * @param _to Address to mint tokens to
-     * @param _amount Amount of tokens to mint
-     */
-    function mint(address _to, uint256 _amount) external;
-
-    /**
-     * @notice Burns tokens from a specified address
-     * @dev Must only be callable by authorized contracts (e.g., ICS20 Proxy Contract)
-     * @param _from Address to burn tokens from
-     * @param _amount Amount of tokens to burn
-     */
-    function burn(address _from, uint256 _amount) external;
-}
+import { IMintableAndBurnable } from "@cosmos/solidity-ibc-eureka/contracts/interfaces/IMintableAndBurnable.sol";
 
 /**
  * @title AlloOFTUpgradeable
