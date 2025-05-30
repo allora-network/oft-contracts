@@ -51,22 +51,8 @@ task('lz:oft:send', 'Send OFT tokens')
             `Transfering '${args.amount}uallo' FROM address '${signer.address}' on network '${hre.network.name}' TO address '${toAddress}' on network '${args.toNetwork}' (EID: ${dstEid})`
         )
 
-        const isFromAdapter = hre.network.name === 'sei-devnet'
-        const oftDeployName = isFromAdapter ? 'AlloOFTAdapter' : 'AlloOFT'
-        console.log(`Using OFT contract: ${oftDeployName}`)
-        const oftDeployment = await hre.deployments.get(oftDeployName)
+        const oftDeployment = await hre.deployments.get('AlloOFTUpgradeable')
         const oftContract = new hre.ethers.Contract(oftDeployment.address, oftDeployment.abi, signer)
-
-        // If OFT adapter we need first to approve the amount to be spent
-        if (isFromAdapter) {
-            const innerTokenAddress = await oftContract.token()
-            console.log(
-                `Source contract is an adapter, approving amount to be spent on inner contract '${innerTokenAddress}'`
-            )
-            const innerToken = await hre.ethers.getContractAt('ERC20', innerTokenAddress, signer)
-            const r = await innerToken.approve(oftDeployment.address, args.amount)
-            console.log(`Approve TX: ${r.hash}`)
-        }
 
         const sendParam: SendParam = {
             dstEid,

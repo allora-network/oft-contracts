@@ -5,15 +5,20 @@
 // - Fill in the environment variables
 import 'dotenv/config'
 
+import '@openzeppelin/hardhat-upgrades'
 import 'hardhat-deploy'
+import '@nomiclabs/hardhat-waffle'
+import 'hardhat-deploy-ethers'
 import 'hardhat-contract-sizer'
 import '@nomiclabs/hardhat-ethers'
+import '@nomiclabs/hardhat-etherscan'
 import '@layerzerolabs/toolbox-hardhat'
+import '@nomicfoundation/hardhat-foundry'
+
 import { HardhatUserConfig, HttpNetworkAccountsUserConfig } from 'hardhat/types'
 
 import { EndpointId } from '@layerzerolabs/lz-definitions'
 
-import './type-extensions'
 import './tasks/sendOFT'
 
 // Set your preferred authentication method
@@ -44,7 +49,7 @@ const config: HardhatUserConfig = {
     solidity: {
         compilers: [
             {
-                version: '0.8.22',
+                version: '0.8.28',
                 settings: {
                     optimizer: {
                         enabled: true,
@@ -60,23 +65,42 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL_SEPOLIA || 'https://rpc.sepolia.org/',
             accounts,
         },
-        'sei-devnet': {
-            eid: EndpointId.SEI_V2_TESTNET,
-            url: process.env.RPC_URL_ARCTIC1 || 'https://evm-rpc-arctic-1.sei-apis.com',
+        'base-sepolia-testnet': {
+            eid: EndpointId.BASESEP_V2_TESTNET,
+            url: process.env.RPC_URL_BASE_SEPOLIA || 'https://sepolia.base.org',
             accounts,
-            oftAdapter: {
-                tokenAddress: '0xc7e7A1B625225fEd006B3DdF6f402e45664D266a', // Set the token address for the OFT adapter
-            },
         },
         hardhat: {
             // Need this for testing because TestHelperOz5.sol is exceeding the compiled contract size limit
             allowUnlimitedContractSize: true,
         },
     },
+    etherscan: {
+        apiKey: {
+            sepolia: process.env.ETHERSCAN_API_KEY || '',
+            'base-sepolia-testnet': 'UXNY2FMKHI56IKWP7ST251KY2HGVQA216G',
+        },
+        customChains: [
+            {
+                network: 'base-sepolia-testnet',
+                chainId: 84532,
+                urls: {
+                    apiURL: 'https://api-sepolia.basescan.org/api',
+                    browserURL: 'https://sepolia.basescan.org',
+                },
+            },
+        ],
+    },
     namedAccounts: {
         deployer: {
             default: 0, // wallet address of index[0], of the mnemonic in .env
         },
+    },
+    layerZero: {
+        // You can tell hardhat toolbox not to include any deployments (hover over the property name to see full docs)
+        deploymentSourcePackages: [],
+        // You can tell hardhat not to include any artifacts either
+        // artifactSourcePackages: [],
     },
 }
 
