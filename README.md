@@ -34,6 +34,25 @@ The token has 18 decimals on EVM chains and uses 6 shared decimals for cross-cha
 - Strict access controls for administrative functions
 - Implementation of standard interfaces for interoperability
 
+## Setup
+
+1. Install dependencies
+```
+pnpm install
+forge install
+```
+
+2. Setup your environment
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env with your configuration
+# Required variables:
+# - MNEMONIC or PRIVATE_KEY for deployment
+# - RPC URLs for the networks you want to deploy to
+```
+
 ## Development
 
 ### Compilation
