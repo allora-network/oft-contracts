@@ -28,23 +28,12 @@ jobs:
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+      
+      - name: Install Forge dependencies
+        run: forge install
 
       - name: Install node_modules
         run: pnpm install
       
-      - name: Install Forge dependencies
-        run: forge install
-      
-      - name: Debug submodule
-        run: |
-          echo "Checking submodule status..."
-          git submodule status
-          echo "Listing lib directory..."
-          ls -la lib/
-          echo "Listing solidity-ibc-eureka directory..."
-          ls -la lib/solidity-ibc-eureka/
-          echo "Checking if interface file exists..."
-          ls -la lib/solidity-ibc-eureka/contracts/interfaces/
-
       - name: Compile
         run: pnpm compile
