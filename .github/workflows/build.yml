@@ -31,6 +31,17 @@ jobs:
 
       - name: Install deps
         run: pnpm install
+      
+      - name: Debug submodule
+        run: |
+          echo "Checking submodule status..."
+          git submodule status
+          echo "Listing lib directory..."
+          ls -la lib/
+          echo "Listing solidity-ibc-eureka directory..."
+          ls -la lib/solidity-ibc-eureka/
+          echo "Checking if interface file exists..."
+          ls -la lib/solidity-ibc-eureka/contracts/interfaces/
 
       - name: Compile
         run: pnpm compile
