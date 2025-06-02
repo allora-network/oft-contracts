@@ -6,4 +6,5 @@
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable
 [submodule "lib/solidity-ibc-eureka"]
 	path = lib/solidity-ibc-eureka
-	url = https://github.com/cosmos/solidity-ibc-eureka@solidity-v2.0.0
+	url = https://github.com/cosmos/solidity-ibc-eureka.git
+  branch = 00e0332b6c327c78d3aa905e288dd43e513bb002
