@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import { OFTTest } from "@layerzerolabs/oft-evm-upgradeable/test/OFT.t.sol";
 import { EndpointV2Mock } from "@layerzerolabs/test-devtools-evm-foundry/contracts/mocks/EndpointV2Mock.sol";
-import { AlloOFTUpgradeable} from "../../contracts/AlloOFTUpgradeable.sol";
+import { AlloOFTUpgradeable } from "../../contracts/AlloOFTUpgradeable.sol";
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import { ProxyAdmin } from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 import { ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";

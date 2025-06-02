@@ -37,12 +37,14 @@ The token has 18 decimals on EVM chains and uses 6 shared decimals for cross-cha
 ## Setup
 
 1. Install dependencies
+
 ```
 pnpm install
 forge install
 ```
 
 2. Setup your environment
+
 ```bash
 # Copy the example environment file
 cp .env.example .env
