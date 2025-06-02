@@ -32,5 +32,8 @@ jobs:
       - name: Install deps
         run: pnpm install
 
+      - name: Install Forge dependencies
+        run: forge install
+
       - name: Test
         run: pnpm test
