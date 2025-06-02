@@ -14,9 +14,9 @@ libs = [
     # - forge-std
     # - ds-test
     # - solidity-bytes-utils
+    'lib', # prioretize lib directory
     'node_modules/@layerzerolabs/toolbox-foundry/lib',
-    'node_modules',
-    'lib'
+    'node_modules'
 ]
 
 remappings = [
@@ -27,5 +27,4 @@ remappings = [
     'ds-test/=node_modules/@layerzerolabs/toolbox-foundry/lib/ds-test',
     'forge-std/=node_modules/@layerzerolabs/toolbox-foundry/lib/forge-std',
     '@layerzerolabs/=node_modules/@layerzerolabs/',
-    '@cosmos/solidity-ibc-eureka/=lib/solidity-ibc-eureka/'
-]
+    '@cosmos/solidity-ibc-eureka/=lib/solidity-ibc-eureka/']
