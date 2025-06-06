@@ -3,9 +3,9 @@ cache/
 dist/
 node_modules/
 out/
-deployments/
 *.log
 *ignore
 *.yaml
 *.lock
 package-lock.json
+lib/**/*

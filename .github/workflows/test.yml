@@ -29,7 +29,10 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Install deps
+      - name: Install Forge dependencies
+        run: forge install
+
+      - name: Install node_modules
         run: pnpm install
 
       - name: Test

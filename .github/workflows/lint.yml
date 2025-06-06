@@ -30,8 +30,17 @@ jobs:
         with:
           version: 9
 
-      - name: Install deps
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Install Forge dependencies
+        run: forge install
+
+      - name: Install node_modules
         run: pnpm install
+
+      - name: Install Forge dependencies
+        run: forge install
 
       - name: Lint js
         run: pnpm lint:js
@@ -49,8 +58,17 @@ jobs:
         with:
           version: 9
 
-      - name: Install deps
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Install Forge dependencies
+        run: forge install
+
+      - name: Install node_modules
         run: pnpm install
+
+      - name: Install Forge dependencies
+        run: forge install
 
       - name: Lint solitidy
         run: pnpm lint:sol
