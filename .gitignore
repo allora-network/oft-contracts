@@ -1,7 +1,9 @@
+.anchor
 node_modules
 .env
 coverage
 coverage.json
+target
 typechain
 typechain-types
 
