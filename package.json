@@ -81,6 +81,7 @@
     "eslint": "^8.55.0",
     "eslint-plugin-jest-extended": "~2.0.0",
     "ethers": "^5.7.2",
+    "exponential-backoff": "^3.1.2",
     "hardhat": "^2.22.10",
     "hardhat-contract-sizer": "^2.10.0",
     "hardhat-deploy": "^0.12.1",
