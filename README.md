@@ -282,10 +282,10 @@ The `lz:oft:send` hardhat task is available to send tokens through the LayerZero
 
 ```bash
 # Send 1 ALLO from Ethereum Sepolia to Base Sepolia
-npx hardhat lz:oft:send --src-eid 40161 --dst-eid 40245 --amount 1 --to 0xF2489e0d20Df54514B371dF0360316B244a275c6 
+npx hardhat lz:oft:send --src-eid 40161 --dst-eid 40245 --amount 1 --to 0xF2489e0d20Df54514B371dF0360316B244a275c6
 
 # Send 1 ALLO from Ethereum Sepolia to Solana
-npx hardhat lz:oft:send --src-eid 40161 --dst-eid 40168 --amount 1 --to 97zzVFruAgRyAsd9Rj491e5BZ8L8m3AY3R5tg3x6gchX 
+npx hardhat lz:oft:send --src-eid 40161 --dst-eid 40168 --amount 1 --to 97zzVFruAgRyAsd9Rj491e5BZ8L8m3AY3R5tg3x6gchX
 
 # Send 1 ALLO from Solana to Ethereum Sepolia
 npx hardhat lz:oft:send --src-eid 40168 --dst-eid 40161 --amount 1 --to 0xF2489e0d20Df54514B371dF0360316B244a275c6

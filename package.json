@@ -20,8 +20,17 @@
     "ethers": "^5.7.2",
     "hardhat-deploy": "^0.12.1"
   },
+  "overrides": {
+    "@solana/web3.js": "^1.98.0",
+    "ethers": "^5.7.2",
+    "hardhat-deploy": "^0.12.1"
+  },
+  "dependencies": {
+    "@layerzerolabs/metadata-tools": "^2.0.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.23.9",
+    "@coral-xyz/anchor": "^0.31.1",
     "@ethersproject/bytes": "^5.7.0",
     "@layerzerolabs/devtools": "~0.4.8",
     "@layerzerolabs/devtools-evm": "~1.0.6",
@@ -42,6 +51,8 @@
     "@layerzerolabs/oft-evm-upgradeable": "^3.0.2",
     "@layerzerolabs/oft-v2-solana-sdk": "^3.0.86",
     "@layerzerolabs/prettier-config-next": "^2.3.39",
+    "@layerzerolabs/protocol-devtools": "^2.0.0",
+    "@layerzerolabs/protocol-devtools-solana": "^7.0.0",
     "@layerzerolabs/solhint-config": "^3.0.12",
     "@layerzerolabs/test-devtools-evm-foundry": "~6.0.3",
     "@layerzerolabs/toolbox-foundry": "~0.1.12",
@@ -75,6 +86,7 @@
     "@types/chai": "^4.3.11",
     "@types/mocha": "^10.0.6",
     "@types/node": "~18.18.14",
+    "bs58": "^6.0.0",
     "chai": "^4.4.1",
     "concurrently": "~9.1.0",
     "dotenv": "^16.4.1",
@@ -102,13 +114,5 @@
       "ethers": "^5.7.2",
       "hardhat-deploy": "^0.12.1"
     }
-  },
-  "overrides": {
-    "ethers": "^5.7.2",
-    "hardhat-deploy": "^0.12.1",
-    "@solana/web3.js": "^1.98.0"
-  },
-  "dependencies": {
-    "@layerzerolabs/metadata-tools": "^2.0.0"
   }
 }
