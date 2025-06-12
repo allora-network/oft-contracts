@@ -8,6 +8,11 @@ import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/I
 import { ProxyAdmin } from "@openzeppelin/contracts/proxy/transparent/ProxyAdmin.sol";
 import { ITransparentUpgradeableProxy } from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import { IMintableAndBurnable } from "@cosmos/solidity-ibc-eureka/contracts/interfaces/IMintableAndBurnable.sol";
+import { OptionsBuilder } from "@layerzerolabs/oapp-evm/contracts/oapp/libs/OptionsBuilder.sol";
+import { IOFT, SendParam, OFTReceipt } from "@layerzerolabs/oft-evm/contracts/interfaces/IOFT.sol";
+import { MessagingFee, MessagingReceipt } from "@layerzerolabs/oft-evm-upgradeable/contracts/oft/OFTCoreUpgradeable.sol";
+import { OFTComposerMock } from "@layerzerolabs/oft-evm/test/mocks/OFTComposerMock.sol";
+import { OFTComposeMsgCodec } from "@layerzerolabs/oft-evm/contracts/libs/OFTComposeMsgCodec.sol";
 
 contract MockICS20TransferProxy {
     IMintableAndBurnable public mintableBurnableToken;
@@ -44,10 +49,13 @@ contract AlloOFTTestUpgrade is AlloOFTUpgradeable {
 }
 
 contract AlloOFTUpgradeableTest is OFTTest {
+    using OptionsBuilder for bytes;
+
     bytes32 internal constant IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
     bytes32 internal constant ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
 
     AlloOFTUpgradeable alloErc20;
+    AlloOFTUpgradeable alloErc20OftB;
     MockICS20TransferProxy ics20TransferProxy;
 
     address delegate = makeAddr("delegate");
@@ -87,6 +95,23 @@ contract AlloOFTUpgradeableTest is OFTTest {
                 )
             )
         );
+        alloErc20OftB = AlloOFTUpgradeable(
+            _deployContractAndProxy(
+                type(AlloOFTUpgradeable).creationCode,
+                abi.encode(address(endpoints[bEid])),
+                abi.encodeWithSelector(AlloOFTUpgradeable.initialize.selector, "Allora", "$ALLO", delegate, address(0))
+            )
+        );
+
+        // config and wire the ofts
+        address[] memory ofts = new address[](2);
+        ofts[0] = address(alloErc20);
+        ofts[1] = address(alloErc20OftB);
+
+        vm.prank(delegate);
+        alloErc20.setPeer(bEid, addressToBytes32(address(alloErc20OftB)));
+        vm.prank(delegate);
+        alloErc20OftB.setPeer(aEid, addressToBytes32(address(alloErc20)));
 
         // Set the mintableBurnableToken address in the ICS20TransferProxy contract
         ics20TransferProxy.setMintableBurnableToken(address(alloErc20));
@@ -428,5 +453,111 @@ contract AlloOFTUpgradeableTest is OFTTest {
         // Verify the upgrade function was called
         AlloOFTTestUpgrade upgradedContract = AlloOFTTestUpgrade(address(alloErc20));
         assertTrue(upgradedContract.wasUpgradeFunctionCalled());
+    }
+
+    // Tests for benchmarking lzReceive and lzCompose
+    function test_lzReceive_benchmark() public {
+        // Setup similar to existing test
+        uint256 tokensToSend = 1 ether;
+        bytes memory options = OptionsBuilder.newOptions().addExecutorLzReceiveOption(200000, 0);
+        SendParam memory sendParam = SendParam(
+            bEid,
+            addressToBytes32(userB),
+            tokensToSend,
+            tokensToSend,
+            options,
+            "",
+            ""
+        );
+        uint256 initialAlloBalance = 1000 ether;
+
+        // ensure peers have native tokens
+        vm.deal(userA, 100 ether);
+        vm.deal(userB, 100 ether);
+
+        // Mint tokens to this contract
+        ics20TransferProxy.bridgeTokensFromCosmosToEvm(userA, initialAlloBalance);
+
+        for (uint i = 0; i < 500; i++) {
+            // Setup for each iteration
+            assertEq(alloErc20.balanceOf(userA), initialAlloBalance - i * tokensToSend);
+            assertEq(alloErc20OftB.balanceOf(userB), i * tokensToSend);
+
+            MessagingFee memory fee = alloErc20.quoteSend(sendParam, false);
+            vm.prank(userA);
+            alloErc20.send{ value: fee.nativeFee }(sendParam, fee, payable(address(this)));
+            verifyPackets(bEid, addressToBytes32(address(alloErc20OftB)));
+
+            assertEq(alloErc20.balanceOf(userA), initialAlloBalance - (i + 1) * tokensToSend);
+            assertEq(alloErc20OftB.balanceOf(userB), (i + 1) * tokensToSend);
+        }
+    }
+
+    function test_lzCompose_benchmark() public {
+        uint256 tokensToSend = 1 ether;
+        uint256 initialAlloBalance = 500 ether;
+
+        // Deploy a composer for receiving compose messages
+        OFTComposerMock composer = new OFTComposerMock();
+
+        bytes memory options = OptionsBuilder
+            .newOptions()
+            .addExecutorLzReceiveOption(200000, 0)
+            .addExecutorLzComposeOption(0, 500000, 0);
+        bytes memory composeMsg = hex"1234";
+
+        SendParam memory sendParam = SendParam(
+            bEid,
+            addressToBytes32(address(composer)),
+            tokensToSend,
+            tokensToSend,
+            options,
+            composeMsg,
+            ""
+        );
+
+        // Ensure peers have native tokens
+        vm.deal(userA, 100 ether);
+        vm.deal(address(composer), 100 ether);
+
+        // Mint tokens to userA
+        uint256 amountToMint = initialAlloBalance - alloErc20.balanceOf(userA);
+        ics20TransferProxy.bridgeTokensFromCosmosToEvm(userA, amountToMint);
+
+        for (uint i = 0; i < 500; i++) {
+            // Setup for each iteration - verify balances before
+            assertEq(alloErc20.balanceOf(userA), initialAlloBalance - i * tokensToSend);
+            assertEq(alloErc20OftB.balanceOf(address(composer)), i * tokensToSend);
+
+            // Send OFT with compose message
+            MessagingFee memory fee = alloErc20.quoteSend(sendParam, false);
+            vm.prank(userA);
+            (MessagingReceipt memory msgReceipt, OFTReceipt memory oftReceipt) = alloErc20.send{ value: fee.nativeFee }(
+                sendParam,
+                fee,
+                payable(address(this))
+            );
+            verifyPackets(bEid, addressToBytes32(address(alloErc20OftB)));
+
+            // Verify balances after send but before compose
+            assertEq(alloErc20.balanceOf(userA), initialAlloBalance - (i + 1) * tokensToSend);
+            assertEq(alloErc20OftB.balanceOf(address(composer)), (i + 1) * tokensToSend);
+
+            // Execute lzCompose - this is what we're benchmarking
+            bytes memory composerMsg_ = OFTComposeMsgCodec.encode(
+                msgReceipt.nonce,
+                aEid,
+                oftReceipt.amountReceivedLD,
+                abi.encodePacked(addressToBytes32(userA), composeMsg)
+            );
+
+            this.lzCompose(bEid, address(alloErc20OftB), options, msgReceipt.guid, address(composer), composerMsg_);
+
+            // Verify compose message was processed correctly
+            assertEq(composer.from(), address(alloErc20OftB));
+            assertEq(composer.guid(), msgReceipt.guid);
+            assertEq(composer.message(), composerMsg_);
+            assertEq(composer.executor(), address(this));
+        }
     }
 }

@@ -4,9 +4,8 @@ import { EndpointId, endpointIdToNetwork } from '@layerzerolabs/lz-definitions'
 import { getDeploymentAddressAndAbi } from '@layerzerolabs/lz-evm-sdk-v2'
 
 const contractName = 'AlloOFTUpgradeable'
-// @note: since the $ALLO token doesn't have any initial supply,
-// we can use a custom testing address for the ICS20 proxy for minting new tokens when testing
-const ICS20_PROXY_ADDRESS = '0x0000000000000000000000000000000000000000'
+// Ethereum mainnet ICS20 proxy address (https://docs.skip.build/go/eureka/custom-erc20-integration#access-control-requirements)
+const ICS20_PROXY_ADDRESS = '0xa348CfE719B63151F228e3C30EB424BA5a983012'
 
 const deploy: DeployFunction = async (hre) => {
     const { deploy } = hre.deployments
@@ -35,7 +34,7 @@ const deploy: DeployFunction = async (hre) => {
             execute: {
                 init: {
                     methodName: 'initialize',
-                    args: ['Allora', '$ALLO', signer.address, ICS20_PROXY_ADDRESS],
+                    args: ['Allora', 'ALLO', signer.address, ICS20_PROXY_ADDRESS],
                 },
             },
         },
