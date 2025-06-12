@@ -60,7 +60,7 @@ const config: HardhatUserConfig = {
         ],
     },
     networks: {
-        'sepolia-testnet': {
+        sepolia: {
             eid: EndpointId.SEPOLIA_V2_TESTNET,
             url: process.env.RPC_URL_SEPOLIA || 'https://rpc.sepolia.org/',
             accounts,
@@ -68,6 +68,11 @@ const config: HardhatUserConfig = {
         'base-sepolia-testnet': {
             eid: EndpointId.BASESEP_V2_TESTNET,
             url: process.env.RPC_URL_BASE_SEPOLIA || 'https://sepolia.base.org',
+            accounts,
+        },
+        'ethereum-mainnet': {
+            eid: EndpointId.ETHEREUM_V2_MAINNET,
+            url: process.env.RPC_URL_ETH_MAINNET,
             accounts,
         },
         hardhat: {
@@ -79,6 +84,7 @@ const config: HardhatUserConfig = {
         apiKey: {
             sepolia: process.env.ETHERSCAN_API_KEY || '',
             'base-sepolia-testnet': process.env.BASESCAN_API_KEY || '',
+            mainnet: process.env.ETHERSCAN_API_KEY || '',
         },
         customChains: [
             {
