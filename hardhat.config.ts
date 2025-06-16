@@ -72,7 +72,7 @@ const config: HardhatUserConfig = {
         },
         'ethereum-mainnet': {
             eid: EndpointId.ETHEREUM_V2_MAINNET,
-            url: process.env.RPC_URL_ETH_MAINNET,
+            url: process.env.RPC_URL_ETH_MAINNET || '',
             accounts,
         },
         hardhat: {
