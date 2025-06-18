@@ -26,7 +26,8 @@
     "hardhat-deploy": "^0.12.1"
   },
   "dependencies": {
-    "@layerzerolabs/metadata-tools": "^2.0.0"
+    "@layerzerolabs/metadata-tools": "^2.0.0",
+    "@sqds/multisig": "^2.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",
@@ -51,7 +52,6 @@
     "@layerzerolabs/oft-evm-upgradeable": "^3.1.0",
     "@layerzerolabs/oft-v2-solana-sdk": "^3.0.86",
     "@layerzerolabs/prettier-config-next": "^2.3.39",
-    "@layerzerolabs/protocol-devtools": "^2.0.0",
     "@layerzerolabs/protocol-devtools-solana": "^7.0.0",
     "@layerzerolabs/solhint-config": "^3.0.12",
     "@layerzerolabs/test-devtools-evm-foundry": "~6.0.3",

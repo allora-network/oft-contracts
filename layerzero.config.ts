@@ -81,18 +81,37 @@ export default async function () {
             [15, 32],
             [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS],
         ],
+        [
+            baseSepoliaContract,
+            solanaDevnetContract,
+            [['LayerZero Labs'], []],
+            [15, 32],
+            [SOLANA_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS],
+        ],
     ])
 
     return {
         contracts: [
             {
                 contract: baseSepoliaContract,
+                config: {
+                    delegate: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+                    owner: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+                },
             },
             {
                 contract: sepoliaContract,
+                config: {
+                    delegate: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+                    owner: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+                },
             },
             {
                 contract: solanaDevnetContract,
+                config: {
+                    delegate: 'DGWdm6qvYQMXyc7aiAJBWwPJoojbUGLCPGGn686DcAwh',
+                    owner: 'DGWdm6qvYQMXyc7aiAJBWwPJoojbUGLCPGGn686DcAwh',
+                },
             },
         ],
         connections,

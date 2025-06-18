@@ -64,11 +64,19 @@ const config: HardhatUserConfig = {
             eid: EndpointId.SEPOLIA_V2_TESTNET,
             url: process.env.RPC_URL_SEPOLIA || 'https://rpc.sepolia.org/',
             accounts,
+            safeConfig: {
+                safeUrl: 'https://safe-transaction-sepolia.safe.global',
+                safeAddress: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+            },
         },
         'base-sepolia-testnet': {
             eid: EndpointId.BASESEP_V2_TESTNET,
             url: process.env.RPC_URL_BASE_SEPOLIA || 'https://sepolia.base.org',
             accounts,
+            safeConfig: {
+                safeUrl: 'https://safe-transaction-base-sepolia.safe.global',
+                safeAddress: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+            },
         },
         'ethereum-mainnet': {
             eid: EndpointId.ETHEREUM_V2_MAINNET,
