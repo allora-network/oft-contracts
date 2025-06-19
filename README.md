@@ -314,3 +314,59 @@ npx hardhat lz:oft:send --src-eid 40161 --dst-eid 40168 --amount 1 --to 97zzVFru
 # Send 1 ALLO from Solana to Ethereum Sepolia
 npx hardhat lz:oft:send --src-eid 40168 --dst-eid 40161 --amount 1 --to 0xF2489e0d20Df54514B371dF0360316B244a275c6
 ```
+
+## Transfer Ownership
+
+This section ought to describe how to transfer ownership of the different contracts, depending on the target network.
+
+### EVM
+
+The ownership of EVM contracts can be achieved in three steps:
+
+#### 1. Set Delegate:
+
+This step **must** be done before transferring the OFT ownership.
+
+On the concerned contract in [layerzero.config.ts](layerzero.config.ts), set the `delegate` field to the of the new
+delegate, e.g.:
+
+```
+{
+    contract: myContract,
+    config: {
+        delegate: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+    },
+}
+```
+
+To apply the changes run the wire command:
+
+```bash
+npx hardhat lz:oapp:wire --oapp-config layerzero.config.ts
+```
+
+#### 2. Transfer OFT Ownership:
+
+On the concerned contract in [layerzero.config.ts](layerzero.config.ts), set the `owner` field to the of the new
+owner, e.g.:
+
+```
+{
+    contract: myContract,
+    config: {
+        delegate: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+        owner: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+    },
+}
+```
+
+To apply the changes run the following command:
+
+```bash
+npx hardhat lz:ownable:transfer-ownership --oapp-config layerzero.config.ts
+```
+
+#### 3. Transfer ProxyAdmin Ownership:
+
+The `transferOwnership` method on the `ProxyAdmin` must be called providing the new owner, this can be done on an
+explorer.
