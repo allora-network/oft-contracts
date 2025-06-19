@@ -1,7 +1,10 @@
+.anchor
+.turbo
+node_modules
+target
 artifacts
 cache
 dist
-node_modules
 out
 *.log
 *.sol
@@ -9,3 +12,4 @@ out
 *.lock
 package-lock.json
 lib/**/*
+deployments

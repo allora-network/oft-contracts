@@ -19,7 +19,7 @@ import { HardhatUserConfig, HttpNetworkAccountsUserConfig } from 'hardhat/types'
 
 import { EndpointId } from '@layerzerolabs/lz-definitions'
 
-import './tasks/sendOFT'
+import './tasks/index'
 
 // Set your preferred authentication method
 //
@@ -60,14 +60,27 @@ const config: HardhatUserConfig = {
         ],
     },
     networks: {
-        'sepolia-testnet': {
+        sepolia: {
             eid: EndpointId.SEPOLIA_V2_TESTNET,
             url: process.env.RPC_URL_SEPOLIA || 'https://rpc.sepolia.org/',
             accounts,
+            safeConfig: {
+                safeUrl: 'https://safe-transaction-sepolia.safe.global',
+                safeAddress: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+            },
         },
         'base-sepolia-testnet': {
             eid: EndpointId.BASESEP_V2_TESTNET,
             url: process.env.RPC_URL_BASE_SEPOLIA || 'https://sepolia.base.org',
+            accounts,
+            safeConfig: {
+                safeUrl: 'https://safe-transaction-base-sepolia.safe.global',
+                safeAddress: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+            },
+        },
+        'ethereum-mainnet': {
+            eid: EndpointId.ETHEREUM_V2_MAINNET,
+            url: process.env.RPC_URL_ETH_MAINNET || '',
             accounts,
         },
         hardhat: {
@@ -78,7 +91,8 @@ const config: HardhatUserConfig = {
     etherscan: {
         apiKey: {
             sepolia: process.env.ETHERSCAN_API_KEY || '',
-            'base-sepolia-testnet': 'UXNY2FMKHI56IKWP7ST251KY2HGVQA216G',
+            'base-sepolia-testnet': process.env.BASESCAN_API_KEY || '',
+            mainnet: process.env.ETHERSCAN_API_KEY || '',
         },
         customChains: [
             {
