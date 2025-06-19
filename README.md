@@ -446,3 +446,30 @@ To update it:
 ```bash
 solana program set-upgrade-authority <PROGRAM_ID> --new-upgrade-authority <NEW_OWNER> -k old-owner-keypair.json --skip-new-upgrade-authority-signer-check
 ```
+
+### Multisig
+
+When using multisigs, some commands (i.e. typically `lz:oapp:wire`) will require some arguments:
+
+- For EVM: the `--safe` option will make the task to use the configured safe config in `hardhat.config.ts`;
+- For Solana: the `--multisig-key` option will allow to set the squads multisig PDA;
+
+### Upgrade
+
+#### EVM
+
+To upgrade an EVM contract you can use the `lz:oft:evm:upgrade` task, using the following args:
+
+- `--eid`: The endpoint id of the targeted chain;
+- `--new-contract-name`: The name of the new contract to deploy;
+- `--safe`: If the contract owner is a multisig, this will only deploy the contract, another step will be required to
+  call the `upgrade` method on the contract ProxyAdmin using the multisig;
+
+For example:
+
+```bash
+npx hardhat lz:oft:evm:upgrade --eid 40161 --new-contract-name AlloOFTUpgradeableV2 --safe
+```
+
+After deploying or upgrade we must ensure that current deployments informations are up to date under `deployments` and
+`.openzeppelin` folders. The openzeppelin info can be generated using the task `lz:oft:evm:import-openzeppelin-network`.
