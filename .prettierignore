@@ -11,4 +11,6 @@ out/
 *.yaml
 *.lock
 package-lock.json
+package.json
+deployments
 lib/**/*
