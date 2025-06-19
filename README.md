@@ -370,3 +370,79 @@ npx hardhat lz:ownable:transfer-ownership --oapp-config layerzero.config.ts
 
 The `transferOwnership` method on the `ProxyAdmin` must be called providing the new owner, this can be done on an
 explorer.
+
+### Solana
+
+The ownership of Solana programs can be achieved in the following steps:
+
+#### 1. Set Delegate:
+
+This step **must** be done before transferring the OFT ownership.
+
+On the concerned contract in [layerzero.config.ts](layerzero.config.ts), set the `delegate` field to the of the new
+delegate, e.g.:
+
+```
+{
+    contract: myContract,
+    config: {
+        delegate: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+    },
+}
+```
+
+To apply the changes run the wire command:
+
+```bash
+npx hardhat lz:oapp:wire --oapp-config layerzero.config.ts
+```
+
+#### 2. Transfer OFT Ownership:
+
+On the concerned contract in [layerzero.config.ts](layerzero.config.ts), set the `owner` field to the of the new
+owner, e.g.:
+
+```
+{
+    contract: myContract,
+    config: {
+        delegate: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+        owner: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+    },
+}
+```
+
+To apply the changes run the following command:
+
+```bash
+npx hardhat lz:ownable:transfer-ownership --oapp-config layerzero.config.ts
+```
+
+#### 3. Update SPL metadata update authority
+
+The current SPL metadata can be fetched using the metaboss CLI:
+
+```bash
+metaboss -r https://api.devnet.solana.com decode mint --full -a <MINT_ADDR>
+cat <MINT_ADDR>.json
+```
+
+To change the update authority use:
+
+```bash
+npx hardhat lz:oft:solana:set-update-authority --eid 40168 --mint <MINT_ADDR> --new-update-authority <NEW_OWNER>
+```
+
+#### 4. Update OFT program upgrade authority
+
+We can get the current program upgrade authority with:
+
+```bash
+solana program show <PROGRAM_ID>
+```
+
+To update it:
+
+```bash
+solana program set-upgrade-authority <PROGRAM_ID> --new-upgrade-authority <NEW_OWNER> -k old-owner-keypair.json --skip-new-upgrade-authority-signer-check
+```
