@@ -314,3 +314,162 @@ npx hardhat lz:oft:send --src-eid 40161 --dst-eid 40168 --amount 1 --to 97zzVFru
 # Send 1 ALLO from Solana to Ethereum Sepolia
 npx hardhat lz:oft:send --src-eid 40168 --dst-eid 40161 --amount 1 --to 0xF2489e0d20Df54514B371dF0360316B244a275c6
 ```
+
+## Transfer Ownership
+
+This section ought to describe how to transfer ownership of the different contracts, depending on the target network.
+
+### EVM
+
+The ownership of EVM contracts can be achieved in three steps:
+
+#### 1. Set Delegate:
+
+This step **must** be done before transferring the OFT ownership.
+
+On the concerned contract in [layerzero.config.ts](layerzero.config.ts), set the `delegate` field to the of the new
+delegate, e.g.:
+
+```
+{
+    contract: myContract,
+    config: {
+        delegate: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+    },
+}
+```
+
+To apply the changes run the wire command:
+
+```bash
+npx hardhat lz:oapp:wire --oapp-config layerzero.config.ts
+```
+
+#### 2. Transfer OFT Ownership:
+
+On the concerned contract in [layerzero.config.ts](layerzero.config.ts), set the `owner` field to the of the new
+owner, e.g.:
+
+```
+{
+    contract: myContract,
+    config: {
+        delegate: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+        owner: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+    },
+}
+```
+
+To apply the changes run the following command:
+
+```bash
+npx hardhat lz:ownable:transfer-ownership --oapp-config layerzero.config.ts
+```
+
+#### 3. Transfer ProxyAdmin Ownership:
+
+The `transferOwnership` method on the `ProxyAdmin` must be called providing the new owner, this can be done on an
+explorer.
+
+### Solana
+
+The ownership of Solana programs can be achieved in the following steps:
+
+#### 1. Set Delegate:
+
+This step **must** be done before transferring the OFT ownership.
+
+On the concerned contract in [layerzero.config.ts](layerzero.config.ts), set the `delegate` field to the of the new
+delegate, e.g.:
+
+```
+{
+    contract: myContract,
+    config: {
+        delegate: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+    },
+}
+```
+
+To apply the changes run the wire command:
+
+```bash
+npx hardhat lz:oapp:wire --oapp-config layerzero.config.ts
+```
+
+#### 2. Transfer OFT Ownership:
+
+On the concerned contract in [layerzero.config.ts](layerzero.config.ts), set the `owner` field to the of the new
+owner, e.g.:
+
+```
+{
+    contract: myContract,
+    config: {
+        delegate: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+        owner: '0x8330bcC0770bAb19Cd4AcEdb4DC4c0d9B3E9528E',
+    },
+}
+```
+
+To apply the changes run the following command:
+
+```bash
+npx hardhat lz:ownable:transfer-ownership --oapp-config layerzero.config.ts
+```
+
+#### 3. Update SPL metadata update authority
+
+The current SPL metadata can be fetched using the metaboss CLI:
+
+```bash
+metaboss -r https://api.devnet.solana.com decode mint --full -a <MINT_ADDR>
+cat <MINT_ADDR>.json
+```
+
+To change the update authority use:
+
+```bash
+npx hardhat lz:oft:solana:set-update-authority --eid 40168 --mint <MINT_ADDR> --new-update-authority <NEW_OWNER>
+```
+
+#### 4. Update OFT program upgrade authority
+
+We can get the current program upgrade authority with:
+
+```bash
+solana program show <PROGRAM_ID>
+```
+
+To update it:
+
+```bash
+solana program set-upgrade-authority <PROGRAM_ID> --new-upgrade-authority <NEW_OWNER> -k old-owner-keypair.json --skip-new-upgrade-authority-signer-check
+```
+
+### Multisig
+
+When using multisigs, some commands (i.e. typically `lz:oapp:wire`) will require some arguments:
+
+- For EVM: the `--safe` option will make the task to use the configured safe config in `hardhat.config.ts`;
+- For Solana: the `--multisig-key` option will allow to set the squads multisig PDA;
+
+### Upgrade
+
+#### EVM
+
+To upgrade an EVM contract you can use the `lz:oft:evm:upgrade` task, using the following args:
+
+- `--eid`: The endpoint id of the targeted chain;
+- `--new-contract-name`: The name of the new contract to deploy;
+- `--safe`: If the contract owner is a multisig, this will only deploy the contract, another step will be required to
+  call the `upgrade` method on the contract ProxyAdmin using the multisig;
+
+For example:
+
+```bash
+npx hardhat lz:oft:evm:upgrade --eid 40161 --new-contract-name AlloOFTUpgradeableV2 --safe
+```
+
+After deploying or upgrade we must ensure that current deployments informations are up to date under `deployments` and
+`.openzeppelin` folders. The openzeppelin info can be generated using the task `lz:oft:evm:import-openzeppelin-network`.
