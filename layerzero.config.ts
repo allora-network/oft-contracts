@@ -21,6 +21,11 @@ const solanaDevnetContract: OmniPointHardhat = {
     address: getOftStoreAddress(EndpointId.SOLANA_V2_TESTNET),
 }
 
+const ethereumMainnetContract: OmniPointHardhat = {
+    eid: EndpointId.ETHEREUM_V2_MAINNET,
+    contractName: 'AlloOFTUpgradeable',
+}
+
 const EVM_ENFORCED_OPTIONS: OAppEnforcedOption[] = [
     {
         msgType: 1,
@@ -111,6 +116,13 @@ export default async function () {
                 config: {
                     delegate: 'DGWdm6qvYQMXyc7aiAJBWwPJoojbUGLCPGGn686DcAwh',
                     owner: 'DGWdm6qvYQMXyc7aiAJBWwPJoojbUGLCPGGn686DcAwh',
+                },
+            },
+            {
+                contract: ethereumMainnetContract,
+                config: {
+                    delegate: '0x09Aa0e11891028a0D47C2f3bA2eC335420885F68',
+                    owner: '0x09Aa0e11891028a0D47C2f3bA2eC335420885F68',
                 },
             },
         ],
